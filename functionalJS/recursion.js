@@ -10,24 +10,21 @@
 
 function getDependencies(tree, dependencies) {
 	var allDependencies = dependencies || [];
-	console.log(tree);
 	
 	Object.keys(tree).forEach(function(key) {
-		console.log(key);
 		if (tree[key].hasOwnProperty("version")) {
-			console.log("Got version");
-			allDependencies.push(key + '@' + tree[key]['version']);
+			var newDependency = key + '@' + tree[key]['version'];
+			if (!(allDependencies.indexOf(newDependency) > -1)) {
+				allDependencies.push(newDependency);
+			}
 		}
 		if (tree[key].hasOwnProperty("dependencies")) {
-			console.log("Got sub dependencies");
 			allDependencies.concat(getDependencies(tree[key]['dependencies'], allDependencies));
 		}
 		if (key === "dependencies") {
-			console.log("Got dependencies");
 			allDependencies.concat(getDependencies(tree[key], allDependencies));
 		}
 	});
-	console.log(allDependencies);
 	return allDependencies.sort();
 }
 
