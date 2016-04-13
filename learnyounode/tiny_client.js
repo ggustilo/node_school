@@ -10,6 +10,6 @@ var request = http.get(process.argv[2], function(response){
 		console.log("There was an error: " + error);
 	});
 	response.on("end", function(end){
-		console.log("");
+		console.log();
 	});
 });

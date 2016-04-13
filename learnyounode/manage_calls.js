@@ -1,4 +1,4 @@
-var call = require("./tiny_client_2");
+var call = require("./http_collect");
 
 var urls = process.argv.slice(2);
 
