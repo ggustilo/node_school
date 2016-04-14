@@ -1,12 +1,12 @@
 var http = require('http');
 var concat = require('concat-stream');
 
-// function requestData() {
-    var request = http.get(process.argv[2], function(response) {
+function requestData(url, index, callback) {
+    http.get(url, function(response) {
         response.pipe(concat(function(data) {
-            console.log(data.length);
-            console.log(data.toString());
+            callback(index, data.toString());
         }));
     });
-// }
+}
 
+module.exports.requestData = requestData;
