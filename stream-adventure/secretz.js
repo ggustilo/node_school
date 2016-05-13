@@ -2,9 +2,8 @@ var crypto = require('crypto');
 var zlib = require('zlib');
 var tar = require('tar');
 var parser = tar.Parse();
-var combine = require('stream-combiner');
 var decipher = crypto.createDecipher(process.argv[2], process.argv[3]);
-var hasher = crypto.createHash('md5', { encoding: 'hex' });
+var concat = require('concat-stream');
 
 // get stuff on stdin
 // unzip it
@@ -18,13 +17,15 @@ var hasher = crypto.createHash('md5', { encoding: 'hex' });
 // output a newline
 
 parser.on('entry', function(e) {
-	var hashedContent = e.pipe(hasher);
-	var filename = e.path;
-	console.log(hashedContent + ' ' + filename + '\n');
+	if (e.type !== 'File') return;
+
+	var hash = crypto.createHash('md5', { encoding: 'hex' });
+	e.pipe(hash).pipe(concat(function(h){
+			console.log(h + ' ' + e.path);
+	}));
 });
 
-process.stdin.pipe(zlib.createGunzip())
-			.pipe(decipher)
-			.pipe(parser)
-			.pipe(process.stdout);
+process.stdin.pipe(decipher)
+			.pipe(zlib.createGunzip())
+			.pipe(parser);
 
